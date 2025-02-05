@@ -11,6 +11,7 @@ env:
   AZURE_OPENAI_API_BASE: ${{secrets.AZURE_OPENAI_API_BASE }}
   AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
   AZURE_OPENAI_DEPLOYMENT_ID: ${{secrets.AZURE_OPENAI_DEPLOYMENT_ID }}
+  DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
   FIREWORKS_API_KEY: ${{ secrets.FIREWORKS_API_KEY }}
   FIREWORKS_ACCOUNT_ID: ${{ secrets.FIREWORKS_ACCOUNT_ID }}
   FORCE_COLOR: 1
@@ -264,7 +265,7 @@ jobs:
       - name: Launch the gateway for batch tests
         run: |
           curl ${{ secrets.CLICKHOUSE_CLOUD_URL }} --data-binary 'SHOW DATABASES'
-          cargo run-e2e &
+          cargo run-e2e > batch_logs.txt 2>&1 &
           echo "GATEWAY_PID=$!" >> $GITHUB_ENV
           while ! curl -s -f http://localhost:3000/health >/dev/null 2>&1; do
             echo "Waiting for gateway to be healthy..."
@@ -274,3 +275,7 @@ jobs:
       - name: Run batch tests
         run: |
           cargo test-batch
+
+      - name: Print batch logs
+        if: always()
+        run: cat batch_logs.txt
