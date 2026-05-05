@@ -1,12 +1,15 @@
 name: security
 
 on:
-  pull_request:
   merge_group:
+  pull_request:
+  push:
 
+# Don't cancel in-progress runs: cancelling can abort the SARIF upload mid-flight,
+# leaving the PR head SHA with no Code Scanning results and blocking branch protection.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: read # Required for checkout or repository metadata reads.
