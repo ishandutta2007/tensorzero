@@ -39,6 +39,7 @@
 mod exporter_wrapper;
 pub mod genai_conventions;
 pub mod internal_metrics;
+pub mod openinference_conventions;
 pub mod request_logging;
 mod span_leak_detector;
 pub mod tracing_bug;
