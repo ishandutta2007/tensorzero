@@ -76,10 +76,10 @@ where
         .boxed()
 }
 
-#[cfg(test)]
-#[expect(clippy::print_stdout)]
+#[cfg(all(test, feature = "e2e_tests"))]
+#[expect(clippy::print_stdout, clippy::unwrap_used)]
 mod tests {
-    use crate::observability::{self, enter_fake_http_request_otel};
+    use crate::{LogFormat, enter_fake_http_request_otel, setup_observability};
     use gag::BufferRedirect;
     use serde_json::json;
     use std::io::Read;
@@ -113,10 +113,9 @@ mod tests {
 
     async fn run_bad_tracing_code(should_see_bug: bool) {
         if should_see_bug {
-            observability::tracing_bug::DISABLE_TRACING_BUG_WORKAROUND
-                .store(true, std::sync::atomic::Ordering::SeqCst);
+            super::DISABLE_TRACING_BUG_WORKAROUND.store(true, std::sync::atomic::Ordering::SeqCst);
         }
-        let handle = observability::setup_observability(observability::LogFormat::Json, false)
+        let handle = setup_observability(LogFormat::Json, crate::TENSORZERO_DEFAULTS)
             .await
             .unwrap();
         handle.delayed_otel.unwrap().enable_otel().unwrap();

@@ -2204,6 +2204,15 @@ impl From<AnalysisError> for Error {
     }
 }
 
+#[cfg(feature = "otel")]
+impl From<tensorzero_otel::ObservabilityError> for Error {
+    fn from(err: tensorzero_otel::ObservabilityError) -> Self {
+        Self::new(ErrorDetails::Observability {
+            message: err.to_string(),
+        })
+    }
+}
+
 #[cfg(feature = "autopilot-client")]
 impl From<autopilot_client::AutopilotError> for Error {
     fn from(err: autopilot_client::AutopilotError) -> Self {

@@ -22,7 +22,7 @@ use tensorzero::{
     },
 };
 use tensorzero_core::observability::{
-    enter_fake_http_request_otel, setup_observability_with_exporter_override,
+    TENSORZERO_DEFAULTS, enter_fake_http_request_otel, setup_observability_with_exporter_override,
 };
 use tensorzero_core::{
     config::OtlpTracesFormat,
@@ -74,10 +74,13 @@ pub async fn install_capturing_otel_exporter() -> CapturingOtelExporter {
     let exporter = CapturingOtelExporter {
         spans: Arc::new(Mutex::new(Some(vec![]))),
     };
-    let handle =
-        setup_observability_with_exporter_override(LogFormat::Pretty, Some(exporter.clone()), true)
-            .await
-            .unwrap();
+    let handle = setup_observability_with_exporter_override(
+        LogFormat::Pretty,
+        Some(exporter.clone()),
+        TENSORZERO_DEFAULTS,
+    )
+    .await
+    .unwrap();
     handle.delayed_otel.unwrap().enable_otel().unwrap();
     exporter
 }

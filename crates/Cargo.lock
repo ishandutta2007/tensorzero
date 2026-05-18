@@ -8107,6 +8107,7 @@ dependencies = [
  "tensorzero-error",
  "tensorzero-http",
  "tensorzero-inference-types",
+ "tensorzero-otel",
  "tensorzero-overhead",
  "tensorzero-stored-config",
  "tensorzero-types",
@@ -8159,6 +8160,7 @@ dependencies = [
  "serde_json",
  "sqlx",
  "tensorzero-http",
+ "tensorzero-otel",
  "tensorzero-types",
  "thiserror 2.0.18",
  "tracing",
@@ -8294,6 +8296,41 @@ dependencies = [
  "tracing-subscriber",
  "ts-rs",
  "url",
+ "uuid",
+]
+
+[[package]]
+name = "tensorzero-otel"
+version = "2026.5.2"
+dependencies = [
+ "axum",
+ "clap",
+ "futures",
+ "gag",
+ "http 1.4.0",
+ "init-tracing-opentelemetry",
+ "log",
+ "metrics",
+ "metrics-exporter-prometheus",
+ "moka",
+ "once_cell",
+ "opentelemetry",
+ "opentelemetry-otlp",
+ "opentelemetry-semantic-conventions",
+ "opentelemetry_sdk",
+ "rustls",
+ "serde_json",
+ "tensorzero-overhead",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tokio-util",
+ "tonic",
+ "tracing",
+ "tracing-futures",
+ "tracing-opentelemetry",
+ "tracing-opentelemetry-instrumentation-sdk",
+ "tracing-subscriber",
  "uuid",
 ]
 

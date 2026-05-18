@@ -1,5 +1,5 @@
 use crate::error::ErrorDetails;
-use crate::observability::{LogFormat, setup_observability};
+use crate::observability::{LogFormat, TENSORZERO_EMBEDDED_DEFAULTS, setup_observability};
 
 use super::ValkeyConnectionInfo;
 
@@ -9,7 +9,9 @@ use super::ValkeyConnectionInfo;
 /// TLS support works.
 #[tokio::test]
 async fn test_tls_url_gives_connection_error() {
-    setup_observability(LogFormat::Pretty, false).await.unwrap();
+    setup_observability(LogFormat::Pretty, TENSORZERO_EMBEDDED_DEFAULTS)
+        .await
+        .unwrap();
 
     let result = ValkeyConnectionInfo::new("rediss://tensorzero.invalid:6379").await;
     let err = result
@@ -23,7 +25,9 @@ async fn test_tls_url_gives_connection_error() {
 
 #[tokio::test]
 async fn test_tls_url_gives_connection_error_cache_only() {
-    setup_observability(LogFormat::Pretty, false).await.unwrap();
+    setup_observability(LogFormat::Pretty, TENSORZERO_EMBEDDED_DEFAULTS)
+        .await
+        .unwrap();
 
     let result = ValkeyConnectionInfo::new_cache_only("rediss://tensorzero.invalid:6379").await;
     let err = result

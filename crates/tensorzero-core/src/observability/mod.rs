@@ -36,13 +36,11 @@
 //!    custom HTTP headers and OpenTelemetry resources. Otherwise, we our default `SdkTracer`, which doesn't attach any custom headers
 //!    or extra OpenTelemetry resources.
 
-mod exporter_wrapper;
 pub mod genai_conventions;
 pub mod internal_metrics;
 pub mod openinference_conventions;
 pub mod request_logging;
-mod span_leak_detector;
-pub mod tracing_bug;
-mod tracing_otel;
 
-pub use tracing_otel::*;
+pub use tensorzero_otel::*;
+// Preserve the `tensorzero_core::observability::tracing_bug::...` path used by e2e tests.
+pub use tensorzero_otel::tracing_bug;

@@ -385,9 +385,12 @@ async fn run() -> Result<(), ExitCode> {
     // Set up logs and metrics immediately, so that we can use `tracing`.
     // OTLP will be enabled based on the config file
     // We start with empty headers and update them after loading the config
-    let delayed_log_config = observability::setup_observability(args.log_format.clone(), true)
-        .await
-        .log_err_pretty("Failed to set up logs")?;
+    let delayed_log_config = observability::setup_observability(
+        args.log_format.clone(),
+        observability::TENSORZERO_DEFAULTS,
+    )
+    .await
+    .log_err_pretty("Failed to set up logs")?;
 
     if args.early_exit_commands.create_api_key {
         handle_create_api_key(args.early_exit_command_arguments.expiration)
@@ -482,8 +485,9 @@ async fn run() -> Result<(), ExitCode> {
         from_database: config_in_database,
     } = load_startup_config(&args).await?;
 
-    let metrics_handle = observability::setup_metrics(Some(&unwritten_config.gateway.metrics))
-        .log_err_pretty("Failed to set up metrics")?;
+    let metrics_handle =
+        observability::setup_metrics(&unwritten_config.gateway.metrics.get_buckets())
+            .log_err_pretty("Failed to set up metrics")?;
 
     if unwritten_config.gateway.debug {
         delayed_log_config

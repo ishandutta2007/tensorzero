@@ -19,11 +19,7 @@ impl SpanLeakDetector {
     }
 
     pub fn print_active_spans(&self) {
-        let entries = self
-            .spans
-            .iter()
-            .map(|(_, v)| v.debug_string.clone())
-            .collect::<Vec<_>>();
+        let entries = self.format_active_spans();
         if entries.is_empty() {
             return;
         }
@@ -31,6 +27,23 @@ impl SpanLeakDetector {
             "The following spans are still active:\n{}",
             entries.join("\n")
         );
+    }
+
+    /// Returns the number of spans currently observed as open. Useful for
+    /// post-shutdown assertions in tests.
+    pub fn open_span_count(&self) -> usize {
+        // moka's `Cache::iter()` is the only way to size this cache — there
+        // is no constant-time `len`.
+        self.spans.iter().count()
+    }
+
+    /// Returns one debug string per currently-open span. Format is unstable
+    /// (intended for human inspection / assertion failure messages).
+    pub fn format_active_spans(&self) -> Vec<String> {
+        self.spans
+            .iter()
+            .map(|(_, v)| v.debug_string.clone())
+            .collect()
     }
 }
 

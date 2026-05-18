@@ -68,7 +68,8 @@ use tensorzero_rust::{
     InferenceOutput, InferenceParams, InferenceStream, Input, LaunchOptimizationParams,
     LaunchOptimizationWorkflowParams, OptimizationDataSource, OptimizationJobHandle, OrderBy,
     PostgresConfig, RenderedSample, RunEvaluationHttpParams, TensorZeroError, Tool,
-    WorkflowEvaluationRunParams, err_to_http, observability::LogFormat,
+    WorkflowEvaluationRunParams, err_to_http,
+    observability::{LogFormat, TENSORZERO_EMBEDDED_DEFAULTS},
 };
 use tokio::sync::Mutex;
 use url::Url;
@@ -95,9 +96,20 @@ fn tensorzero(m: &Bound<'_, PyModule>) -> PyResult<()> {
     // the only place where we actually try to enable OTEL.
     let _delayed_enable = tokio_block_on_without_gil(
         m.py(),
-        tensorzero_rust::observability::setup_observability(LogFormat::Pretty, false),
+        tensorzero_rust::observability::setup_observability(
+            LogFormat::Pretty,
+            TENSORZERO_EMBEDDED_DEFAULTS,
+        ),
     )
-    .map_err(|e| convert_error(m.py(), TensorZeroError::Other { source: e.into() }))?;
+    .map_err(|e| {
+        let tz_err: tensorzero_core::error::Error = e.into();
+        convert_error(
+            m.py(),
+            TensorZeroError::Other {
+                source: tz_err.into(),
+            },
+        )
+    })?;
     m.add_class::<BaseTensorZeroGateway>()?;
     m.add_class::<AsyncTensorZeroGateway>()?;
     m.add_class::<TensorZeroGateway>()?;
